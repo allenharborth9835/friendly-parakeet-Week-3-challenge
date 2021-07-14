@@ -2,7 +2,7 @@
 // Get references to the #generate element
 var generateBtn = document.querySelector("#generate");
 
-//create array with different options
+//create array with the different options
 var numbersArr = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
 var upperCaseArr = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 var lowerCaseArr = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
@@ -16,17 +16,21 @@ var pickRandom = function(array){
 //create a prompt to ask for length of password
 var getLength = function(){
   var length = window.prompt("how long do you want your password?");
-  //if password is less then 8 and more then 128 it should prompt again
+  //if password is less then 8 and more then 128 it should prompt again and must also be a number
   if(length < 8){
     window.alert("length to short please try again!");
-    getLength();
+    return getLength();
   }else if(length> 128){
     window.alert("length to long please try again!");
-    getLength();
+    return getLength();
+  }else if(isNaN(length)){
+    window.alert("length must be a number!");
+    return getLength();
   }else{
     return length
   }
 }
+//create a prompt to choose what options the user wants
 var getOptions = function(){
   var bulkArray = []
   var essentailArray = []
@@ -76,26 +80,27 @@ var getOptions = function(){
       return [bulkArray, essentailArray];
     }
 }
+//a function that must generate password
 var generatePassword = function(essentailArr, bulkArr, passwordLength){
+  //a blank string to store the elements of a password
   let password = "";
-  var pass = 0;
-  console.log(essentailArr)
+  //adds elments from the arrays until the password is the suffiecent length
   for(var i = 0; i!=passwordLength; i++){
+    //if the elements from the essential array plus the element already 
+    //choosen are the finale length of the password add those elements next
+    //and pull them from the array else pull them out at random until they are
+    //all used once
     if(essentailArr.length + i == passwordLength){
       var arrayNum = pickRandom(essentailArr)
       var pick = essentailArr[arrayNum]
       password = password + pick
       essentailArr.splice(arrayNum, 1)
-      //console.log(essentailArr.length)
-      pass++
     }else if(essentailArr.length > 0){
       if(Math.random()>= 0.5){
         var arrayNum = pickRandom(essentailArr)
         var pick = essentailArr[arrayNum]
         password = password + pick
         essentailArr.splice(arrayNum, 1)
-        //console.log(essentailArr.length)
-        pass++
       }else{
         var pick = bulkArr[pickRandom(bulkArr)]
         password = password + pick
@@ -105,13 +110,19 @@ var generatePassword = function(essentailArr, bulkArr, passwordLength){
       password = password + pick
     }
   }
-  console.log(pass)
+  //return password to be used
   return password
 }
+//write password to the page
 function writePassword() {
+  //first get length by running the getLength function
   var codeLength = getLength()
+  //get the arrays by running the getOption function
   var codeArrays = getOptions()
+  //divide the arrays between the main bulk array and the essential array
   var bulk = codeArrays[0]
+  //the essential array holds one of each of the option and will be add
+  //once in to the password to ensure the password has one of each element
   var essent = codeArrays[1]
  
   var passwordText = document.querySelector("#password")
